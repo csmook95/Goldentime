@@ -6,5 +6,9 @@ module.exports = defineConfig([
   expoConfig,
   {
     ignores: ['dist/*'],
+    rules: {
+      "no-console": `warn`,
+      "prefer-const": `warn`,
+    }
   },
 ]);

@@ -66,6 +66,7 @@
     "expo-web-browser": "~14.2.0",
     "lucide-react-native": "^0.510.0",
     "nativewind": "^4.1.23",
+    "openai": "^5.20.0",
     "react": "19.0.0",
     "react-aria": "^3.33.0",
     "react-dom": "19.0.0",

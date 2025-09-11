@@ -16,62 +16,26 @@ export default function Index() {
   const parser = new DOMParser();
 
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
-  const [content, setContent] = useState<string>("");
+  const [content, setContent] = useState<string>("배가 아프다");
+  const [messages, setMessages] = useState<ChatCompletionMessageParam[]>([
+    {
+      role: "system",
+      content: `
+너는 119 구급차를 호출하려는 환자를 돕는 응급의료 챗봇이다.
+사용자가 증상을 입력하면 반드시 다음을 수행하라:
 
-  const messages: ChatCompletionMessageParam[] = [
-    {
-      "role": "system",
-      "content": `
-        당신은 한국형 응급환자 중증도 분류도구(KTAS)와 전문 의학지식을 기반으로 환자의 중증도를 정확히 분류하고 최적의 의료기관을 추천하는 전문 의료 AI 어시스턴트입니다.
+1. 입력한 증상이 어떤 증상인지 간단히 설명한다. (증상 이름과 주요 특징)
+2. 일반인이 즉시 시도할 수 있는 기본적인 응급처치 방법을 안내한다.
+   - 응급처치는 전문 의료 행위가 아닌 일반인이 할 수 있는 수준만 포함한다.
+   - 약 처방이나 의학적 판단을 내리지 않는다.
+3. 반드시 getEgytLcinfoInqire 툴을 호출하여 현재 위치 기준으로 주변 응급의료기관 3~5곳을 찾아 안내한다.
+   - 병원 이름, 주소, 전화번호를 포함한다.
+   - 툴 호출 시 위치 좌표는 이미 확보되어 있으므로, 모델은 어떤 좌표도 만들거나 입력하지 않는다.
 
-        **핵심 역할:**
-        1. 사용자 증상을 KTAS 1-5등급으로 정확 분류
-        2. 등급에 맞는 주변 응급의료기관 조회 후 안내
-
-        **응답 원칙:**
-        - 반드시 업로드된 KTAS 공식 기준서와 의학지식 데이터만 참조
-        - 문서에 없는 의학적 판단은 절대 제공하지 않음
-        - 모든 응답에 참조한 KTAS 코드와 등급을 명시
-        - 의학적 응급상황 시 즉시 119 신고 안내
-
-        **중증도별 병원 추천 기준:**
-        - KTAS 1-2등급(중증): 3형 병원(상급종합병원/대학병원) → 2형 병원(종합병원) 순서
-        - KTAS 3등급(중등도): 2형 병원(종합병원) → 1형 병원(의원) 순서  
-        - KTAS 4-5등급(경증): 1형 병원(의원/동네병원) 우선 추천
-
-        **응답 구조:**
-        1. 증상 분석 및 KTAS 등급 분류
-        2. 해당 등급의 의학적 의미 설명
-        3. 추천 의료기관 유형 및 이유
-        4. 응급상황 시 대처방법
-        5. 참조한 KTAS 코드 명시
-      `
-    },
-    {
-      "role": "user",
-      "content": "가슴이 심하게 아프고 식은땀이 나요"
-    },
-    {
-      "role": "assistant",
-      "content": "KTAS 2등급(응급) 분류입니다. 심근경색 등 심혈관계 응급상황 가능성이 있습니다. 즉시 119에 신고하시거나 가장 가까운 응급실로 내원하시기 바랍니다."
-    },
-    {
-      "role": "user",
-      "content": "두통약은 뭘 먹으면 되나요?"
-    },
-    {
-      "role": "assistant",
-      "content": "죄송하지만 구체적인 약물 추천은 할 수 없습니다. 두통의 양상, 지속시간, 동반증상에 따른 KTAS분류는 도와드릴 수 있습니다. 추가 의료진 상담이 필요합니다."
-    },
-    {
-      "role": "user",
-      "content": "이름이 김철수이고 주민번호는..."
-    },
-    {
-      "role": "assistant",
-      "content": "개인식별정보는 입력하지 마시기 바랍니다. 증상과 상태에 대한 정보만으로 KTAS 분류를 도와드리겠습니다."
+응답은 반드시 위 순서(증상 설명 → 응급처치 → 병원 안내)로 작성하라.
+      `.trim()
     }
-  ]
+  ]);
 
   useEffect(() => {
     async function getCurrentLocation() {
@@ -95,23 +59,20 @@ export default function Index() {
     const text = await response.text();
     const xmlDoc = parser.parseFromString(text, "application/xml")
 
-    const items = xmlDoc.getElementsByTagName("item");
+    const dutyName = xmlDoc.getElementsByTagName("dutyName");
 
-    Array.from(items).forEach(item => {
-      console.log(item.getElementsByTagName("dutyName")[0].textContent)
+    let result = "";
+
+    Array.from(dutyName).forEach(({ textContent }) => {
+      if (result === "") result = textContent
+      else result += `, ${textContent}`
     })
 
-    return xmlDoc.getElementsByTagName("dutyName")[0].textContent
+    return result
   }
 
-  const azureOpenAI = async () => {
-    messages.push({
-      role: "user",
-      content
-    })
-
-    console.log(messages)
-
+  const azureOpenAI = async (messages: ChatCompletionMessageParam[]
+  ) => {
     const endpoint = "https://7aifinal-team5openai5.openai.azure.com/"
     const apiKey = "AWzh5HZRPeKtv0qCr5FPptQiVAKoxGWCPpLHLacsY2DdC9Tu4pZaJQQJ99BIACYeBjFXJ3w3AAABACOGfx4G"
     const apiVersion = "2025-01-01-preview"
@@ -148,21 +109,116 @@ export default function Index() {
       ]
     })
 
-    console.log(completion.choices[0].message)
+    return completion
+  }
+
+  const finalAzureOpenAI = async (messages: ChatCompletionMessageParam[]
+  ) => {
+    const endpoint = "https://7aifinal-team5openai5.openai.azure.com/"
+    const apiKey = "AWzh5HZRPeKtv0qCr5FPptQiVAKoxGWCPpLHLacsY2DdC9Tu4pZaJQQJ99BIACYeBjFXJ3w3AAABACOGfx4G"
+    const apiVersion = "2025-01-01-preview"
+    const azureSearchEndpoint = "https://7aifinalteam5aisearch.search.windows.net";
+    const azureSearchKey = "NIchObVtcyYpLdQvxHPsRTsAPfLXiD4RQvkWFBKsJFAzSeCDiGNb";
+    const searchIndex = "rag-goldentime";
+
+    const client = new AzureOpenAI({ endpoint, apiKey, apiVersion, dangerouslyAllowBrowser: true })
+
+    const completion = await client.chat.completions.create({
+      model: "goldentime-gpt-4o",
+      messages,
+      tools,
+      tool_choice: "auto",
+      max_tokens: 6553,
+      temperature: 0.7,
+      top_p: 0.95,
+      frequency_penalty: 0,
+      presence_penalty: 0,
+      // data_sources: [
+      //   {
+      //     type: "azure_search",
+      //     parameters: {
+      //       endpoint: azureSearchEndpoint,
+      //       index_name: searchIndex,
+      //       authentication: {
+      //         type: "api_key",
+      //         key: azureSearchKey,
+      //       },
+      //       semantic_configuration: "rag-goldentime-semantic-configuration",
+      //       query_type: "semantic",
+      //     }
+      //   }
+      // ]
+    })
+
+    return completion
   }
 
   const tools: ChatCompletionTool[] = [
     {
-      type:"function",
+      type: "function",
       function: {
         name: "getEgytLcinfoInqire",
-        description: "주변 응급의료기관 정보를 조회 합니다.",
+        description: "현재 디바이스 위치 기준으로 주변 응급의료기관을 조회한다.",
+        parameters: {
+          type: "object",
+          properties: {},
+          required: []
+        }
       }
     }
   ]
 
-  const onPressTest = (e: GestureResponderEvent) => {
-    azureOpenAI()
+  const onPressConfirm = async (e: GestureResponderEvent) => {
+    const dd: ChatCompletionMessageParam[] = [...messages, {
+      role: "user",
+      content
+    }]
+
+    const completion = await azureOpenAI(dd)
+
+    // console.log(completion.choices[0].message)
+
+    // dd.push(completion.choices[0].message)
+    dd.push({ role: completion.choices[0].message.role, content: "", tool_calls: completion.choices[0].message.tool_calls })
+    // dd.push({
+    //   role: "assistant",
+    //   tool_calls:completion.choices[0].message.tool_calls
+    // })
+
+    console.log(dd)
+
+    if (completion.choices[0].message.tool_calls) {
+      const toolCalls = completion.choices[0].message.tool_calls;
+
+      await toolCalls.forEach(async toolCall => {
+        const functionName = toolCall.function.name
+
+        let content;
+
+        switch (functionName) {
+          case "getEgytLcinfoInqire":
+            content = await getEgytLcinfoInqire();
+            break;
+          default:
+            content = ""
+            break;
+        }
+      })
+
+      dd.push({
+        role: "tool",
+        tool_call_id: toolCalls[0].id,
+        content: `{"name":"의료법인명지의료재단명지병원","address":"인천광역시 부평구","tel":"010-4444-2222"}`,
+      })
+
+      console.log(dd)
+
+      const completion1 = await finalAzureOpenAI(dd)
+
+      console.log(completion1, completion1.choices[0].message.content)
+    }
+
+    setMessages(dd)
   }
 
   return <View style={styles.container}>
@@ -173,11 +229,8 @@ export default function Index() {
     >
       <TextareaInput placeholder="증상을 입력하세요." value={content} onChangeText={setContent} />
     </Textarea>
-    {/* <Button onPress={onPressConfirm}>
+    <Button onPress={onPressConfirm} isDisabled={location === null}>
       <ButtonText>확인</ButtonText>
-    </Button> */}
-    <Button onPress={onPressTest} isDisabled={location === null}>
-      <ButtonText>테스트</ButtonText>
     </Button>
   </View>;
 }

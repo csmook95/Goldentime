@@ -23,10 +23,10 @@ export default function Stream() {
   const azureOpenAI = async () => {
     const events = await client.chat.completions.stream({
       model: "gpt-4.1",
-      messages:[
+      messages: [
         {
-          role:"user",
-          content:"안녕"
+          role: "user",
+          content: "안녕"
         }
       ],
       max_tokens: 1200,

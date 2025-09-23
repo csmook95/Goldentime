@@ -1,65 +1,40 @@
-import { Button, ButtonText } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import { Textarea, TextareaInput } from "@/components/ui/textarea";
-import * as Location from 'expo-location';
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from 'react';
-import { GestureResponderEvent, StyleSheet, View } from "react-native";
+import React, { useEffect } from "react";
+import { Platform, StyleSheet, Text, View } from "react-native";
 
-// 응급 상황에 대한 증상을 입력받아 AI 진단 및 주변 병원 정보를 제공하는 메인 화면 컴포넌트
+const BG = "#ADD8E6";   // 라이트 블루
+
 export default function Index() {
-  const router = useRouter(); // 라우터 객체 초기화
+  const router = useRouter();
 
-  // 현재 위치 정보를 저장하는 상태
-  const [location, setLocation] = useState<Location.LocationObject | null>(null);
-  // 사용자가 입력한 증상 텍스트를 저장하는 상태
-  const [content, setContent] = useState<string>("오른쪽 아랫배가 아픕니다.");
-
-  // 컴포넌트 마운트 시 현재 위치 정보를 가져오는 효과
   useEffect(() => {
-    async function getCurrentLocation() {
-      // 위치 권한 요청
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') return;
+    // 라우터가 준비된 후 메인 화면으로 이동
+    const timer = setTimeout(() => {
+      router.replace("/main_backup");
+    }, 100); // 짧은 딜레이로 라우터 초기화 대기
 
-      // 현재 위치 정보 가져오기
-      const location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    }
+    return () => clearTimeout(timer);
+  }, [router]);
 
-    getCurrentLocation();
-  }, []);
-
-  // "확인" 버튼 클릭 시 실행되는 함수
-  const onPressConfirm = async (e: GestureResponderEvent) => {
-    router.push({
-      pathname: "/result",
-      params: {
-        content
-      }
-    })
-  };
-
-  // UI 렌더링
-  return <View style={styles.container}>
-    <Text>증상을 입력하고 확인 버튼을 누르세요.</Text>
-    <Textarea
-      size="md"
-      className="w-64"
-    >
-      <TextareaInput placeholder="증상을 입력하세요." value={content} onChangeText={setContent} />
-    </Textarea>
-    <Button onPress={onPressConfirm} isDisabled={location === null}>
-      <ButtonText>확인</ButtonText>
-    </Button>
-  </View>;
+  // 로딩 중일 때 보여줄 간단한 화면
+  return (
+    <View style={s.wrap}>
+      <Text style={s.loading}>로딩 중...</Text>
+    </View>
+  );
 }
 
-// 컴포넌트 스타일
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+const s = StyleSheet.create({
+  wrap: {
+    backgroundColor: BG,
+    ...Platform.select({ web: { minHeight: "100vh" }, default: { flex: 1 } }),
+    justifyContent: "center",
     alignItems: "center",
-    justifyContent: "center"
-  }
+    padding: 24,
+  },
+  loading: {
+    fontSize: 18,
+    color: "#44515B",
+    textAlign: "center",
+  },
 });

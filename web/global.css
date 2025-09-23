@@ -1,0 +1,26 @@
+/* React Native Web 줄 간격 문제 해결 */
+* {
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+}
+
+/* Text 요소 기본 스타일 리셋 */
+p, div, span, h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+}
+
+/* React Native Web 컨테이너 */
+#root, body, html {
+  margin: 0;
+  padding: 0;
+  line-height: 1.2;
+}
+
+/* 입력 필드 스타일 */
+input, textarea {
+  line-height: 1.2;
+  font-family: inherit;
+}

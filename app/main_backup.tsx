@@ -11,6 +11,8 @@ const { width, height } = Dimensions.get('window');
 
 // 응급 상황에 대한 증상을 입력받아 AI 진단 및 주변 병원 정보를 제공하는 메인 화면 컴포넌트
 export default function MainBackup() {
+  console.log(process.env.EXPO_PUBLIC_ENDPOINT)
+
   const router = useRouter(); // 라우터 객체 초기화
 
   // 폰트 로딩

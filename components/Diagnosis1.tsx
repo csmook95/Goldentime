@@ -200,15 +200,12 @@ export default function Diagnosis1({ diagnosis }: { diagnosis: Diagnosis }) {
             .filter(hpid => !hpids.includes(hpid))
         }
 
-
         if (tempHpids.length === 0) {
           const response = await fetch(`http://apis.data.go.kr/B552657/ErmctInfoInqireService/getEgytListInfoInqire?serviceKey=${EXPO_PUBLIC_SERVICE_KEY}&Q0=${sidoName}&QD=${specialtyCode}&QZ=A&pageNo=1&numOfRows=500`)
 
           const text = await response.text();
           const xmlDoc = parser.parse(text);
           const item = xmlDoc.response.body.items.item;
-
-          let tempHpids = [];
 
           if (Object.hasOwn(item, "dutyEmclsName")) {
             if (item.dutyEmclsName.includes(range) && !hpids.includes(item.hpid)) tempHpids.push(item.hpid)

@@ -6,12 +6,12 @@ import '@/global.css';
 export default function RootLayout() {
   return <GluestackUIProvider>
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="main_backup" options={{ headerShown: false }} />
-      <Stack.Screen name="main" options={{ headerShown: false }} />
-      <Stack.Screen name="result" options={{ headerShown: false }} />
-      <Stack.Screen name="ktas" options={{ headerShown: false }} />
-      <Stack.Screen name="qr" options={{ headerShown: false }} />
+      <Stack.Screen name="index" />
+      <Stack.Screen name="main_backup" />
+      <Stack.Screen name="main" />
+      <Stack.Screen name="result" />
+      <Stack.Screen name="ktas" />
+      <Stack.Screen name="qr" />
     </Stack>
   </GluestackUIProvider>
 }

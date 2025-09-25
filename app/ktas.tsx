@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import React from 'react';
-import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { DimensionValue, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function KTASPage() {
   const router = useRouter();
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
         maxWidth: 400,
         alignSelf: 'center',
         width: '100%',
-        minHeight: '100vh'
+        minHeight: '100vh' as DimensionValue,
       }
     })
   },

@@ -34,7 +34,7 @@ export default function Index() {
   const [content, setContent] = useState<string>("");
   const [isListening, setIsListening] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognizer>(null);
 
   // 디버깅용 로그
   console.log('현재 content 상태:', content);

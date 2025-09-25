@@ -2,7 +2,7 @@ import { Stack, useRouter } from "expo-router";
 import { ChevronLeft } from 'lucide-react-native';
 import QRCode from 'qrcode';
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, DimensionValue, Image, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function QRScreen() {
   const router = useRouter();
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
         maxWidth: 400,
         alignSelf: 'center',
         width: '100%',
-        minHeight: '100vh'
+        minHeight: '100vh' as DimensionValue
       }
     })
   },

@@ -1,8 +1,7 @@
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { DimensionValue, Platform, StyleSheet, Text, View } from "react-native";
 
-const BG = "#ADD8E6";   // 라이트 블루
 
 export default function Index() {
   const router = useRouter();
@@ -26,8 +25,11 @@ export default function Index() {
 
 const s = StyleSheet.create({
   wrap: {
-    backgroundColor: BG,
-    ...Platform.select({ web: { minHeight: "100vh" }, default: { flex: 1 } }),
+    backgroundColor: "#ADD8E6",
+    ...Platform.select({
+      web: { minHeight: "100vh" as DimensionValue },
+      default: { flex: 1 }
+    }),
     justifyContent: "center",
     alignItems: "center",
     padding: 24,

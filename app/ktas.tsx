@@ -9,8 +9,8 @@ export default function KTASPage() {
     <View style={styles.container}>
       {/* 헤더 */}
       <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton} 
+        <TouchableOpacity
+          style={styles.backButton}
           onPress={() => {
             try {
               if (router.canGoBack()) {
@@ -19,7 +19,7 @@ export default function KTASPage() {
                 router.push('/');
               }
             } catch (error) {
-              console.log('Navigation error:', error);
+              // console.log('Navigation error:', error);
               router.push('/');
             }
           }}
@@ -39,7 +39,7 @@ export default function KTASPage() {
 
         <View style={styles.descriptionSection}>
           <Text style={styles.description}>
-            KTAS(Korean Triage and Acuity Scale)는 환자의 중증도에 따라 1등급부터 5등급까지 분류하여 
+            KTAS(Korean Triage and Acuity Scale)는 환자의 중증도에 따라 1등급부터 5등급까지 분류하여
             응급 진료 우선순위를 정하는 한국형 응급환자 분류도구입니다.
           </Text>
         </View>
@@ -99,7 +99,7 @@ export default function KTASPage() {
         <View style={styles.noteSection}>
           <Text style={styles.noteTitle}>KTAS 분류의 목적</Text>
           <Text style={styles.noteText}>
-            KTAS 분류는 환자의 첫인상 중증도 평가, 주 증상 파악, 활력징후 측정 등 다단계의 정차에 따라 진행됩니다. 
+            KTAS 분류는 환자의 첫인상 중증도 평가, 주 증상 파악, 활력징후 측정 등 다단계의 정차에 따라 진행됩니다.
             이 분류를 통해 의료진은 환자의 위급도를 신속하게 판단하고, 가장 안전하고 효율적인 진료 순서를 결정하게 됩니다.
           </Text>
         </View>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Platform, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { Platform, Pressable, StyleSheet, TextInput, View } from "react-native";
 import CameraIcon from "./CameraIcon";
 import MicIcon from "./MicIcon";
 
@@ -29,9 +29,9 @@ export default function SymptomInput({
   return (
     <View style={styles.wrap}>
       {/* 좌측: 카메라 버튼 */}
-      <Pressable 
-        onPress={onCamera} 
-        style={[styles.leftIcon, hasImage && styles.iconActive]} 
+      <Pressable
+        onPress={onCamera}
+        style={[styles.leftIcon, hasImage && styles.iconActive]}
         hitSlop={8}
       >
         <CameraIcon size={18} color={hasImage ? "#1a73e8" : "#5f6368"} />
@@ -39,13 +39,6 @@ export default function SymptomInput({
 
       {/* 가운데: 입력창과 placeholder 오버레이 */}
       <View style={styles.inputContainer}>
-        {/* 커스텀 placeholder (중앙 정렬) */}
-        {!value && (
-          <Text style={styles.customPlaceholder}>
-            {placeholder}
-          </Text>
-        )}
-        
         {/* 입력창 (투명한 placeholder, 커서는 왼쪽) */}
         <TextInput
           value={value}
@@ -57,7 +50,7 @@ export default function SymptomInput({
               textAlignVertical: value ? 'top' : 'center'
             }
           ]}
-          placeholder="" // 빈 placeholder
+          placeholder={placeholder} // 빈 placeholder
           multiline
           numberOfLines={3}
           onSubmitEditing={onSubmitEditing}
@@ -68,9 +61,9 @@ export default function SymptomInput({
       </View>
 
       {/* 우측: 마이크 버튼 */}
-      <Pressable 
-        onPress={onMic} 
-        style={[styles.rightIcon, isListening && styles.iconListening]} 
+      <Pressable
+        onPress={onMic}
+        style={[styles.rightIcon, isListening && styles.iconListening]}
         hitSlop={8}
       >
         <MicIcon size={16} color={isListening ? "#ffffff" : "#1B3A52"} />
@@ -94,7 +87,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     ...Platform.select({
-      web: { 
+      web: {
         border: "1px solid #e8eaed",
         borderRadius: "20px",
         display: "flex"
@@ -108,19 +101,6 @@ const styles = StyleSheet.create({
     marginRight: SIDE_PAD + ICON_BOX + 8,
     marginVertical: 12,
     justifyContent: "center",
-  },
-  customPlaceholder: {
-    position: "absolute",
-    top: "50%",
-    left: 0,
-    right: 0,
-    fontSize: 16,
-    color: "#9aa0a6",
-    textAlign: "center",
-    textAlignVertical: "center",
-    marginTop: -8, // fontSize/2로 수직 중앙 정렬
-    pointerEvents: "none", // 터치 이벤트 무시
-    zIndex: 1,
   },
   input: {
     fontSize: 16,

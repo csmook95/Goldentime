@@ -6,26 +6,26 @@ const BG = "#ADD8E6";   // 라이트 블루
 const LOGO = "#A85B2C"; // 로고 색
 
 function pickLogo() {
-  try { 
-    return require("../assets/images/logo.png"); 
+  try {
+    return require("../assets/images/logo.png");
   } catch (error) {
-    console.log("logo.png를 찾을 수 없습니다:", error);
+    // console.log("logo.png를 찾을 수 없습니다:", error);
   }
-  
-  try { 
-    return require("../assets/images/golden Time LOGO.png"); 
+
+  try {
+    return require("../assets/images/golden Time LOGO.png");
   } catch (error) {
-    console.log("golden Time LOGO.png를 찾을 수 없습니다:", error);
+    // console.log("golden Time LOGO.png를 찾을 수 없습니다:", error);
   }
-  
+
   // 기본 아이콘들도 시도
-  try { 
-    return require("../assets/images/icon.png"); 
+  try {
+    return require("../assets/images/icon.png");
   } catch (error) {
-    console.log("icon.png를 찾을 수 없습니다:", error);
+    // console.log("icon.png를 찾을 수 없습니다:", error);
   }
-  
-  console.log("로고를 찾을 수 없습니다.");
+
+  // console.log("로고를 찾을 수 없습니다.");
   return null;
 }
 
@@ -69,8 +69,8 @@ const s = StyleSheet.create({
     alignItems: "center",
     padding: 24,
   },
-  logo: { 
-    width: 150, 
+  logo: {
+    width: 150,
     height: 150,
     marginBottom: 20,
     // tintColor 제거 - 원본 색상 사용

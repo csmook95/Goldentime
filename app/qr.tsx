@@ -21,14 +21,14 @@ export default function QRScreen() {
     const month = (now.getMonth() + 1).toString().padStart(2, '0'); // 월 (01-12)
     const day = now.getDate().toString().padStart(2, '0'); // 일 (01-31)
     const datePrefix = `${year}${month}${day}`; // YYMMDD 형식
-    
+
     // 1-99999 범위의 랜덤 숫자 생성
     const randomNumber = Math.floor(Math.random() * 99999) + 1;
-    
+
     // 숫자 범위에 따라 알파벳 결정
     let alphabet;
     let displayNumber;
-    
+
     if (randomNumber <= 9999) {
       alphabet = 'A';
       displayNumber = randomNumber.toString().padStart(4, '0');
@@ -60,11 +60,11 @@ export default function QRScreen() {
       alphabet = 'J';
       displayNumber = (randomNumber - 90000).toString().padStart(4, '0');
     }
-    
+
     const id = `${datePrefix}-${alphabet}${displayNumber}`;
-    console.log('새로 생성된 ID:', id);
+    // console.log('새로 생성된 ID:', id);
     setPatientId(id);
-    
+
     // QR 코드 데이터 생성 (JSON 형태)
     const qrInfo = {
       patientId: id,
@@ -72,7 +72,7 @@ export default function QRScreen() {
       service: 'GoldenTime',
       type: 'patient_identification'
     };
-    
+
     try {
       // QR 코드 이미지 생성
       const qrDataURL = await QRCode.toDataURL(JSON.stringify(qrInfo), {
@@ -85,16 +85,16 @@ export default function QRScreen() {
       });
       setQrImageUri(qrDataURL);
     } catch (error) {
-      console.error('QR 코드 생성 오류:', error);
+      // console.error('QR 코드 생성 오류:', error);
     }
   };
 
   // 새로운 번호 생성
   const regenerateId = () => {
-    console.log('새 번호 생성 버튼 클릭됨');
+    // console.log('새 번호 생성 버튼 클릭됨');
     if (Platform.OS === 'web') {
       // 웹에서는 바로 생성
-      console.log('웹 환경에서 바로 생성');
+      // console.log('웹 환경에서 바로 생성');
       generatePatientId();
     } else {
       // 네이티브에서는 Alert 사용
@@ -118,7 +118,7 @@ export default function QRScreen() {
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
-      
+
       {/* 헤더 */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>

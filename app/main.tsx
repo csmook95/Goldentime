@@ -22,7 +22,7 @@ export default function Index() {
   const router = useRouter(); // 라우터 객체 초기화
 
   // 폰트 로딩
-  let [fontsLoaded] = useFonts({
+  const [fontsLoaded] = useFonts({
     'JosefinSans-Light': require('../assets/fonts/Josefin_Sans/static/JosefinSans-Light.ttf'),
     'JosefinSans-Regular': require('../assets/fonts/Josefin_Sans/static/JosefinSans-Regular.ttf'),
     'JosefinSans-SemiBold': require('../assets/fonts/Josefin_Sans/static/JosefinSans-SemiBold.ttf'),
@@ -35,7 +35,7 @@ export default function Index() {
   const [isListening, setIsListening] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const recognitionRef = useRef<any>(null);
-  
+
   // 디버깅용 로그
   console.log('현재 content 상태:', content);
 
@@ -49,16 +49,16 @@ export default function Index() {
     const requestLocationPermission = async () => {
       try {
         console.log('위치 권한 요청 시작...');
-        
+
         // 현재 권한 상태 먼저 확인
         const currentStatus = await Location.getForegroundPermissionsAsync();
         console.log('현재 위치 권한 상태:', currentStatus);
-        
+
         if (currentStatus.status !== 'granted') {
           console.log('위치 권한 요청 중...');
           const { status } = await Location.requestForegroundPermissionsAsync();
           console.log('위치 권한 요청 결과:', status);
-          
+
           if (status === 'granted') {
             console.log('위치 정보 가져오는 중...');
             const location = await Location.getCurrentPositionAsync({});
@@ -100,18 +100,18 @@ export default function Index() {
 
     try {
       console.log('Azure Speech Service 음성 인식 시작...');
-      
+
       // Azure Speech Config 설정
       const speechConfig = SpeechConfig.fromSubscription(EXPO_PUBLIC_SPEECH_KEY, EXPO_PUBLIC_SPEECH_REGION);
       speechConfig.speechRecognitionLanguage = "ko-KR";
-      
+
       // 오디오 설정
       const audioConfig = AudioConfig.fromDefaultMicrophoneInput();
-      
+
       // Speech Recognizer 생성
       const recognizer = new SpeechRecognizer(speechConfig, audioConfig);
       recognitionRef.current = recognizer;
-      
+
       // 인식 중 이벤트 (실시간)
       recognizer.recognizing = (s, e) => {
         console.log(`인식 중: ${e.result.text}`);
@@ -156,7 +156,7 @@ export default function Index() {
           alert("음성 인식을 시작할 수 없습니다.");
         }
       );
-      
+
     } catch (error) {
       console.error('Azure Speech Service 오류:', error);
       setIsListening(false);
@@ -252,7 +252,7 @@ export default function Index() {
     try {
       // 카메라 권한 요청
       const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
-      
+
       if (cameraPermission.status !== 'granted') {
         Alert.alert('권한 필요', '카메라 사용을 위해 권한이 필요합니다.');
         return;
@@ -281,7 +281,7 @@ export default function Index() {
     try {
       // 미디어 라이브러리 권한 요청
       const libraryPermission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      
+
       if (libraryPermission.status !== 'granted') {
         Alert.alert('권한 필요', '갤러리 접근을 위해 권한이 필요합니다.');
         return;
@@ -310,7 +310,7 @@ export default function Index() {
     if (!content.trim()) {
       return; // 빈 내용일 때는 진행하지 않음
     }
-    
+
     console.log('진단 시작 - 전송할 내용:', content);
     router.push({
       pathname: "/result",
@@ -326,52 +326,52 @@ export default function Index() {
       <View style={styles.page}>
         {/* 헤더 */}
         <View style={styles.header}>
-            <View style={styles.headerText}>
-              <Text style={styles.appName}>GOLDEN TIME</Text>
-              <Text style={styles.appSubtitle}>AI 응급의료 진단</Text>
-            </View>
+          <View style={styles.headerText}>
+            <Text style={styles.appName}>GOLDEN TIME</Text>
+            <Text style={styles.appSubtitle}>AI 응급의료 진단</Text>
+          </View>
         </View>
-        
+
         {/* 카드 섹션 */}
         <View style={styles.cardsRow}>
-            <Card
-              title="KTAS 응급분류"
-              description="한국형 응급환자\n중증도 분류"
-              onPress={() => router.push('/ktas')}
-              actionText="KTAS 란? →"
-              backgroundColor="#E0F2F3"
-              textColor="#8B4F0F"
-              compact={true}
-            />
-            <Card
-              title="본인확인 QR"
-              description="병·의원 접수처에\nQR을 보여주세요"
-              compact={true}
-              actionText="제출하기 →"
-              onPress={() => router.push('/qr')}
-              backgroundColor="#F4E7C1"
-              textColor="#8B4513"
-            />
+          <Card
+            title="KTAS 응급분류"
+            description="한국형 응급환자\n중증도 분류"
+            onPress={() => router.push('/ktas')}
+            actionText="KTAS 란? →"
+            backgroundColor="#E0F2F3"
+            textColor="#8B4F0F"
+            compact={true}
+          />
+          <Card
+            title="본인확인 QR"
+            description="병·의원 접수처에\nQR을 보여주세요"
+            compact={true}
+            actionText="제출하기 →"
+            onPress={() => router.push('/qr')}
+            backgroundColor="#F4E7C1"
+            textColor="#8B4513"
+          />
         </View>
-        
+
         {/* 입력창 섹션 */}
         <View style={styles.inputSection}>
-        {/* 선택된 이미지 미리보기 */}
-        {selectedImage && (
-          <View style={styles.imagePreviewContainer}>
-            <Image source={{ uri: selectedImage }} style={styles.imagePreview} />
-            <TouchableOpacity 
-              style={styles.removeImageButton}
-              onPress={() => {
-                setSelectedImage(null);
-                setContent(prev => prev.replace(/\[사진이 첨부되었습니다[^\]]*\]/g, '').trim());
-              }}
-            >
-              <Text style={styles.removeImageText}>✕</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        
+          {/* 선택된 이미지 미리보기 */}
+          {selectedImage && (
+            <View style={styles.imagePreviewContainer}>
+              <Image source={{ uri: selectedImage }} style={styles.imagePreview} />
+              <TouchableOpacity
+                style={styles.removeImageButton}
+                onPress={() => {
+                  setSelectedImage(null);
+                  setContent(prev => prev.replace(/\[사진이 첨부되었습니다[^\]]*\]/g, '').trim());
+                }}
+              >
+                <Text style={styles.removeImageText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           <SymptomInput
             value={content}
             onChangeText={setContent}
@@ -394,17 +394,17 @@ export default function Index() {
             isListening={isListening}
             hasImage={!!selectedImage}
           />
-        
-        {content.trim() ? (
-          <TouchableOpacity style={styles.diagnoseButton} onPress={onPressConfirm}>
-            <Text style={styles.diagnoseButtonText}>AI 진단 시작</Text>
-          </TouchableOpacity>
-        ) : null}
+
+          {content.trim() ? (
+            <TouchableOpacity style={styles.diagnoseButton} onPress={onPressConfirm}>
+              <Text style={styles.diagnoseButtonText}>AI 진단 시작</Text>
+            </TouchableOpacity>
+          ) : null}
         </View>
-        
+
         {/* 빈 공간 추가 */}
         <View style={{ flex: 1, minHeight: 40 }} />
-        
+
         {/* 면책문구 - 화면 최하단 */}
         <Disclaimer text={`AI의 결과는 참고용으로 의료진의 진단을 대체하지 않습니다.\n응급 상황 시 즉시 119에 신고하세요.`} />
       </View>

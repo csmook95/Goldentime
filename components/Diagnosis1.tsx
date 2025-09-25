@@ -186,25 +186,39 @@ export default function Diagnosis1({ diagnosis }: { diagnosis: Diagnosis }) {
         const text = await response1.text();
         const xmlDoc = parser.parse(text);
 
-        const items: { dutyEmclsName: string, hpid: string }[] = xmlDoc.response.body.items.item;
+        const item = xmlDoc.response.body.items.item;
 
-        const tempHpids = items
-          .filter(item => item.dutyEmclsName.includes(range))
-          .map(item => item.hpid)
-          .filter(hpid => !hpids.includes(hpid))
+        let tempHpids = [];
+
+        if (Object.hasOwn(item, "dutyEmclsName")) {
+          if (item.dutyEmclsName.includes(range) && !hpids.includes(item.hpid)) tempHpids.push(item.hpid)
+        }
+        else {
+          tempHpids = (item as { dutyEmclsName: string, hpid: string }[])
+            .filter(item => item.dutyEmclsName.includes(range))
+            .map(item => item.hpid)
+            .filter(hpid => !hpids.includes(hpid))
+        }
+
 
         if (tempHpids.length === 0) {
           const response = await fetch(`http://apis.data.go.kr/B552657/ErmctInfoInqireService/getEgytListInfoInqire?serviceKey=${EXPO_PUBLIC_SERVICE_KEY}&Q0=${sidoName}&QD=${specialtyCode}&QZ=A&pageNo=1&numOfRows=500`)
 
           const text = await response.text();
           const xmlDoc = parser.parse(text);
-          const items: { dutyEmclsName: string, hpid: string }[] = xmlDoc.response.body.items.item;
+          const item = xmlDoc.response.body.items.item;
 
-          tempHpids.push(...items
-            .filter(item => item.dutyEmclsName.includes(range))
-            .map(item => item.hpid)
-            .filter(hpid => !hpids.includes(hpid))
-          )
+          let tempHpids = [];
+
+          if (Object.hasOwn(item, "dutyEmclsName")) {
+            if (item.dutyEmclsName.includes(range) && !hpids.includes(item.hpid)) tempHpids.push(item.hpid)
+          }
+          else {
+            tempHpids = (item as { dutyEmclsName: string, hpid: string }[])
+              .filter(item => item.dutyEmclsName.includes(range))
+              .map(item => item.hpid)
+              .filter(hpid => !hpids.includes(hpid))
+          }
         }
 
         hpids.push(...tempHpids);
